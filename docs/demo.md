@@ -1,11 +1,12 @@
-# Day 1 demo
+# Day 2 demo
 
-From the repository root after setup:
+From the repository root after `uv sync --locked --extra dev`:
 
-1. Run `agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets/refunds.yaml --out runs/baseline.json`.
-2. Observe all 20 cases passing. Open the report and find `refund_above_limit`: approval is requested, with no refund recorded.
-3. Run `agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets/refunds.yaml --max-steps 1 --out runs/limited.json`.
-4. Observe exit code 1 and the failed cases. Open `runs/limited.json`, locate `refund_valid`, and inspect execution, output, and state diagnostics. The first lookup completed, but the refund could not execute within the configured call limit.
-5. Run `python -m pytest -q`. The evaluator tests also demonstrate that an unauthorized attempt fails even when mock authorization prevents the mutation.
+1. Run `uv run agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets/refunds.yaml --out runs/baseline.json`. All 20 fixtures pass.
+2. Run `uv run agentbench eval --agent examples.support_agent:flawed_agent --dataset datasets/refunds.yaml --out runs/candidate.json`. Expect 13/20 and exit 1.
+3. Run `uv run agentbench trace --run runs/candidate.json --scenario refund_above_limit`. Find the failed refund span, authorization error, and successful approval. The forbidden attempt fails evaluation despite correct final state.
+4. Run `uv run agentbench compare --baseline runs/baseline.json --candidate runs/candidate.json`. Expect seven case regressions and exit 1.
+5. Run `uv run python scripts/ci_gate.py` for exit 0. Repeat with `--agent examples.support_agent:flawed_agent` for exit 1.
+6. Once pushed, manually run **AgentBench regression gate** in GitHub Actions, selecting the flawed adapter to demonstrate a red run. Download `benchmark-reports` for diagnostics. A hosted run is separate from local verification.
 
-This demo uses a constrained run to illustrate diagnosis. A second flawed agent, comparison command, and CI gate are Day 2 work.
+No API keys, real refunds, or stochastic model calls are involved. The alternative configuration is `--settings '{"unsafe_refund_first": true}'` with the scripted adapter; the exported flawed adapter avoids platform-specific JSON shell quoting.

@@ -1,3 +1,3 @@
-from .agent import scripted_agent
+from .agent import scripted_agent, flawed_agent
 
-__all__ = ["scripted_agent"]
+__all__ = ["scripted_agent", "flawed_agent"]

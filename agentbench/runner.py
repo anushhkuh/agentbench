@@ -28,10 +28,11 @@ async def run_dataset(dataset, agent, tool_factory, *, config=None, evaluators=(
             state = deepcopy(scenario.initial_state)
             context = None
             response = None
+            run_id = str(uuid4())
             status, error = "completed", None
             deadline = asyncio.timeout(config.timeout_seconds)
             try:
-                context = AgentContext(state, tool_factory, config.max_steps, settings)
+                context = AgentContext(state, tool_factory, config.max_steps, settings, run_id=run_id)
                 async with deadline:
                     response = await adapter.run(deepcopy(scenario.input), context)
                 if deadline.expired():
@@ -50,9 +51,10 @@ async def run_dataset(dataset, agent, tool_factory, *, config=None, evaluators=(
             except Exception as exc:
                 status, error = "error", f"{type(exc).__name__}: {exc}"
             run = EvaluationRun(
-                id=str(uuid4()), scenario_id=scenario.id, trial=trial, status=status,
+                id=run_id, scenario_id=scenario.id, trial=trial, status=status,
                 output=response.output if response else None,
                 usage=response.usage if response else None,
+                cost_usd=response.cost_usd if response else None,
                 final_state=deepcopy(state), calls=context.calls if context else [],
                 latency_ms=(perf_counter() - started) * 1000, error=error,
             )

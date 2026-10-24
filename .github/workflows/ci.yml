@@ -1,0 +1,47 @@
+name: AgentBench regression gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: Select flawed_agent to demonstrate a failing regression gate
+        type: choice
+        default: examples.support_agent:scripted_agent
+        options:
+          - examples.support_agent:scripted_agent
+          - examples.support_agent:flawed_agent
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          version: "0.13.1"
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install locked dependencies
+        run: uv sync --locked --extra dev
+      - name: Unit and integration tests
+        run: uv run --no-sync pytest -q
+      - name: Deterministic regression gate
+        env:
+          AGENT_ADAPTER: ${{ inputs.agent || 'examples.support_agent:scripted_agent' }}
+        run: uv run --no-sync python scripts/ci_gate.py --agent "$AGENT_ADAPTER"
+      - name: Keep reports even when the gate fails
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: benchmark-reports
+          path: runs/ci/
+          if-no-files-found: warn
+          retention-days: 14

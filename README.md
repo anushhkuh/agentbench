@@ -1,4 +1,4 @@
-# AgentBench — Day 1 MVP
+# AgentBench — Agent evaluation and regression gates
 
 A local Python evaluation harness for tool-using agents. It checks observable tool attempts and final environment state alongside the agent's output. All refund operations are simulated; no API key or external account is needed.
 
@@ -26,7 +26,37 @@ agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets
 
 The baseline should report `Passed 20/20 (100%)`. Latencies are measured per execution and will vary. JSON and Markdown reports are written together. `--out runs/` chooses a unique experiment filename; an explicit JSON filename is overwritten on rerun.
 
-## Demonstrate a failure
+## Diagnose a policy regression
+
+```sh
+uv run agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets/refunds.yaml --out runs/baseline.json
+uv run agentbench eval --agent examples.support_agent:flawed_agent --dataset datasets/refunds.yaml --out runs/candidate.json
+uv run agentbench trace --run runs/candidate.json --scenario refund_above_limit
+uv run agentbench compare --baseline runs/baseline.json --candidate runs/candidate.json --out runs/comparison.json
+```
+
+The flawed agent attempts an above-policy refund before requesting approval. The mock tool blocks it. Its answers and final state still match the baseline, but **7 forbidden-action scenarios fail**, for **13/20 passing**. `eval` and `compare` return exit 1 for this demonstration. `trace` succeeds with exit 0 when it can display a trace, even if that run failed.
+
+Each instrumented call records a span ID, run/parent IDs, UTC start/end timestamps, monotonic duration, inputs, results, and success/error/cancellation status. Nested and concurrent calls retain separate parent relationships. Run IDs are root parents; nested spans point to their calling span. Step-limit rejections fail execution before dispatch and do not add another tool span.
+
+## Regression gates and comparisons
+
+```sh
+uv run python scripts/ci_gate.py
+uv run python scripts/ci_gate.py --agent examples.support_agent:flawed_agent
+```
+
+The first command passes; the second exits 1. Both use the same gate as `.github/workflows/ci.yml`, comparing against `benchmarks/baseline.json`. The workflow runs on pushes and pull requests, saves reports even on failure, and supports manual `flawed_agent` selection to demonstrate a failing Actions run. Local subprocess tests verify both outcomes; hosted execution requires pushing the change and an available Actions runner.
+
+`config/ci-thresholds.json` requires a 100% pass rate, no pass-rate drop, and no previously passing scenario/trial failures. Optional latency gating is disabled because host timing varies. Supply thresholds with `--thresholds file.json` or override them with `--min-pass-rate`, `--max-pass-rate-drop`, `--max-case-regressions`, and `--max-p95-increase-pct`. Rates use fractions (0.05 means five percentage points); the latency option uses a percentage (20 means 20%). Default comparison thresholds match the strict CI policy.
+
+Comparisons reject mismatched dataset hashes/versions, evaluator versions, runner settings, tool factories, execution modes, and scenario/trial coverage. Invalid or incompatible input exits 2. Loading recomputes outcomes and summary metrics from run scores rather than trusting saved aggregate/pass flags. Comparison JSON includes per-scenario pass rates and paired regressions/improvements.
+
+For provider-backed agents, set `--mode stochastic --model-id ... --prompt-id ...`. Mode is a caller declaration, not an automatic determinism check. Stochastic comparison reports observed differences only, without statistical significance testing. `AgentResponse` accepts optional `usage` metrics and `cost_usd`. A metric is totaled only if every run supplies it; missing values remain unknown. Costs are supplied by the adapter, never estimated by the harness.
+
+When intentionally changing fixtures, review them and regenerate the approved baseline with `uv run agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets/refunds.yaml --out benchmarks/baseline.json`. Do not regenerate it automatically in CI. The checked-in baseline records the parent Git revision plus a dirty-tree flag because it was captured during Day 2 implementation. Its timings are illustrative, not a performance target. Reports are trusted local artifacts, not signed attestations against deliberate tampering.
+
+## Demonstrate a call-limit failure
 
 ```sh
 agentbench eval --agent examples.support_agent:scripted_agent --dataset datasets/refunds.yaml --max-steps 1 --out runs/limited.json
@@ -65,11 +95,11 @@ The reference fixtures assert the entire final state, so unrelated mutations als
 
 Use `--concurrency 4 --timeout 5 --max-steps 20 --trials 1` to control execution. Each scenario/trial copies initial state, input, and settings. Results remain in dataset/trial order regardless of completion order. A timeout preserves partial state and captured attempts. The maximum-step setting counts tool calls, not internal reasoning steps. Dataset hashes cover validated semantic content, including expectations and order; formatting changes do not affect the hash.
 
-Reports include schema version, experiment UUID/time, agent and tool identifiers, runner/settings, dataset version/hash, evaluator versions, p50/p95 latency, results, and diagnostics. Latency includes context setup and agent execution, excludes semaphore queueing and evaluation. Individual response usage can be recorded; aggregate usage and cost are currently unknown.
+Schema 1.1 reports include experiment UUID/time, agent/tool identifiers, runner/settings, model/prompt identifiers, Git revision and dirty status, execution mode, dataset version/hash and scenario IDs, evaluator versions, p50/p95 latency, optional usage/cost, results, and diagnostics. Code provenance refers to the harness source checkout; external adapters should record versions in settings. Latency includes context setup and agent execution, excludes semaphore queueing and evaluation. `compare` and `trace` require schema 1.1; regenerate Day 1 reports before using them.
 
 ## Scope and limits
 
-- Day 1 is implemented. Day 2's timed/parented spans, experiment comparison, `trace` command, flawed configuration, and CI regression gates are not implemented. SQLite and optional integrations are deferred.
+- Day 1 and Day 2 functionality are implemented and locally tested. SQLite and optional integrations remain deferred.
 - Adapters are **trusted local Python**, imported explicitly. This is not a sandbox. Agents can access state, bypass wrappers, spawn background tasks, or block the event loop. Only `context.call` activity is observed.
 - Timeouts require cooperative async code. Cancellation that returns is marked timed out; indefinitely blocking or cancellation-resistant code needs process isolation, outside this MVP.
 - Redaction covers common sensitive field names, known sensitive-string echoes, emails, and Bearer credentials at persistence. It is heuristic, not a complete PII detector. Do not use real customer data without a domain-specific redaction policy. Evaluation uses unredacted in-memory values.

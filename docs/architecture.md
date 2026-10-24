@@ -1,4 +1,4 @@
-# Day 1 architecture
+# Architecture
 
 ```text
 YAML / JSON -> validated Dataset -> async runner <- callable / run adapter
@@ -22,4 +22,8 @@ An unsafe attempt can leave correct state because the mock tool refuses it. Stat
 
 Failures are explicit. A runner error or deadline adds a failed execution score. A broken evaluator adds a failed evaluator score while preserving other results. Expected service errors handled by the reference agent can pass, because their scenario explicitly requires safe handling. Partial mutations remain visible after errors and timeouts; no rollback hides them.
 
-Day 2 can enrich ToolCall into timed spans without changing the tool dispatch boundary, add experiment compatibility checks around the dataset hash, and add CI threshold commands around report summaries. No such features are claimed complete here.
+`ToolCall` includes timestamps, monotonic duration, IDs, parentage, and outcome status. A context-local ContextVar carries parent spans across nested awaits without mixing simultaneous calls. The runner assigns a root ID before execution so spans reference their run, including failures and cancellations.
+
+`experiments.py` loads schema 1.1 reports, checks complete unique scenario/trial coverage, recomputes outcomes, aggregates known usage/cost, and captures Git provenance. `comparison.py` checks compatible experiment inputs and applies thresholds. `compare` and `trace` consume saved, redacted artifacts. The CI gate script calls the same CLI commands tested locally, while GitHub Actions installs locked dependencies and retains reports.
+
+The versioned baseline is a fixture, not rebuilt on every CI run. Tests prove that the flawed configuration fails despite matching the correct agent's output and state. Strict thresholds prevent an improvement elsewhere from hiding an individual case regression. Host-dependent latency limits are opt-in.

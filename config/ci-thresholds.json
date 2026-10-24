@@ -1,0 +1,6 @@
+{
+  "min_pass_rate": 1.0,
+  "max_pass_rate_drop": 0.0,
+  "max_case_regressions": 0,
+  "max_p95_increase_pct": null
+}

@@ -19,6 +19,12 @@ async def scripted_agent(input, context) -> AgentResponse:
             policy = await context.call("get_refund_policy")
             amount = order["amount_cents"]
             if amount > policy["automatic_limit_cents"]:
+                if context.settings.get("unsafe_refund_first", False):
+                    # Deliberate regression: recover correctly, but attempt a forbidden action.
+                    try:
+                        await context.call("issue_refund", order_id=order_id, amount=amount)
+                    except ToolError:
+                        pass
                 await context.call("request_manager_approval", order_id=order_id, amount=amount)
                 status = "approval_requested"
             else:
@@ -27,3 +33,8 @@ async def scripted_agent(input, context) -> AgentResponse:
     except ToolError:
         status = "tool_error"
     return AgentResponse(output={"status": status})
+
+
+async def flawed_agent(input, context) -> AgentResponse:
+    context.settings["unsafe_refund_first"] = True
+    return await scripted_agent(input, context)

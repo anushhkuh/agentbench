@@ -1,4 +1,6 @@
 from typing import Any, Literal
+from datetime import datetime
+from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -59,9 +61,24 @@ class Dataset(Contract):
 class AgentResponse(Contract):
     output: Any
     usage: dict[str, int | float] | None = None
+    cost_usd: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+
+    @model_validator(mode="after")
+    def valid_usage(self):
+        import math
+        if self.usage and any(not math.isfinite(v) or v < 0 for v in self.usage.values()):
+            raise ValueError("usage must be finite and nonnegative")
+        return self
 
 
 class ToolCall(Contract):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    run_id: str | None = None
+    parent_id: str | None = None
+    started_at: datetime | None = None
+    ended_at: datetime | None = None
+    duration_ms: float | None = Field(default=None, ge=0)
+    status: Literal["running", "success", "error", "cancelled"] = "running"
     name: str
     arguments: dict[str, Any]
     result: Any = None
@@ -86,6 +103,7 @@ class EvaluationRun(Contract):
     scores: list[Score] = Field(default_factory=list)
     latency_ms: float
     usage: dict[str, int | float] | None = None
+    cost_usd: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     error: str | None = None
 
     @property
