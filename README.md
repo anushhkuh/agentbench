@@ -1,4 +1,4 @@
-# AgentBench â€” Agent evaluation and regression gates
+# AgentBench ” Agent evaluation and regression gates
 
 A local Python evaluation harness for tool-using agents. It checks observable tool attempts and final environment state alongside the agent's output. All refund operations are simulated; no API key or external account is needed.
 
