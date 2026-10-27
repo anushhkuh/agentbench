@@ -73,3 +73,19 @@ Result: **8/20 passed, 12 failed**, exit **1**. Both reports contain all 20 resu
 The first editable install predated creation of the examples package and could not import it from the installed CLI. The fresh install and resynchronization fixed this; the outside-directory check verifies the fix. Initial pip setup also encountered restricted network access and a package cache stall; approved network access and workspace-local uv caching completed setup.
 
 At the end of Day 1, spans, comparisons, and CI gates were outstanding; see the Day 2 verification above for their implementation. No performance or LLM-quality claims are inferred from deterministic mock runs.
+
+## Day 3 (October 26, 2026)
+
+- Development suite: **109 passed** using `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider`.
+- Repeated offline demonstration: 20 scenarios x 3 trials; reference **60/60**, intentionally flawed agent **39/60**, **21** case/trial regressions. The comparison correctly rejected the candidate. The GIF is rendered from these saved deterministic results, not recorded from a live model.
+- SDK tests use OpenAI's real client with an in-memory HTTP transport; no credentials or paid calls are needed for tests.
+- The earlier 0.3.0 wheel snapshot passed **108 tests** in a fresh environment, with imports from site-packages, and the module CLI passed **20/20** outside the source directory. This preceded the added input-size guard test; the final source suite has 109 tests. A subsequent fresh editable sync did not produce a usable test environment (`pytest` missing); no successful final editable-install check is claimed. The uv-generated Windows launcher also failed locally, while `python -m agentbench.cli` worked.
+- Live GPT-6 Luna smoke: four case runs failed with HTTP 429 before tool execution. Diagnostic code: **credit_balance_exhausted**. Further paid calls stopped. These failures do not measure model quality. Provider usage/cost is unavailable; no exact spend is claimed.
+- Live calls disable SDK retries, use standard service tier, and bound model requests, output tokens, and serialized input size. The user's budget is under $5; a successful live comparison remains pending account credits. These controls are not a provider-enforced dollar cap.
+- `.env` is ignored and untracked; only the empty `.env.example` is intended for version control.
+
+### Successful live retry
+
+The live GPT-6 Luna comparison completed on October 26, 2026 after credits were added: both policy-v1 and checklist-v1 passed 40/40 (20 scenarios, two trials); the regression gate passed. These stochastic observations do not establish a statistically significant difference. See [live results](../benchmarks/day3-live-summary.json).
+
+Policy p50/p95: 4.134/5.504 seconds. Checklist p50/p95: 3.883/5.096 seconds. All 84 smoke/comparison case runs had complete usage. Including the successful connection probe, usage was {'input_tokens': 139071, 'output_tokens': 5750}. Standard-price estimate: $0.01678; treating all input as cache writes: $0.02026. These estimates are below the authorized $5 budget, but are not invoice totals. Prior failed requests had unavailable usage. Persisted case reports and provenance are saved under benchmarks/day3-live-*.json.

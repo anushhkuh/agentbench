@@ -1,0 +1,272 @@
+{
+  "model": "gpt-6-luna",
+  "date": "2026-10-26",
+  "comparison": {
+    "passed": true,
+    "violations": [],
+    "thresholds": {
+      "min_pass_rate": 1,
+      "max_pass_rate_drop": 0,
+      "max_case_regressions": 0,
+      "max_p95_increase_pct": null
+    },
+    "execution_mode": "stochastic",
+    "baseline": {
+      "total": 40,
+      "passed": 40,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "latency_p50_ms": 4133.769100008067,
+      "latency_p95_ms": 5503.927430009935,
+      "usage": {
+        "input_tokens": 63615,
+        "output_tokens": 2754,
+        "total_tokens": 66369
+      },
+      "cost": null
+    },
+    "candidate": {
+      "total": 40,
+      "passed": 40,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "latency_p50_ms": 3883.4079000225756,
+      "latency_p95_ms": 5096.165125031256,
+      "usage": {
+        "input_tokens": 66875,
+        "output_tokens": 2684,
+        "total_tokens": 69559
+      },
+      "cost": null
+    },
+    "pass_rate_delta": -0.0,
+    "regressions": [],
+    "improvements": [],
+    "per_scenario": [
+      {
+        "scenario_id": "approval_duplicate",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "approval_service_error",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "custom_threshold",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "injection_above_limit",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "injection_ineligible",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "missing_order_id",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "order_service_error",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "policy_service_error",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_above_limit",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_at_limit",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_duplicate",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_ineligible",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_missing",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_negative",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_one_cent",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_one_cent_above",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_service_error",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_valid",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "refund_zero",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      },
+      {
+        "scenario_id": "zero_threshold",
+        "baseline_pass_rate": 1.0,
+        "candidate_pass_rate": 1.0
+      }
+    ]
+  },
+  "experiments": {
+    "baseline": {
+      "id": "21d62a15-3cf3-4086-9227-fbc787175fdc",
+      "created_at": "2026-10-26T18:24:57.084595+00:00",
+      "agent": "examples.support_agent.llm_agent:llm_agent",
+      "tool_factory": "examples.support_agent.tools:support_tools",
+      "settings": {
+        "model": "gpt-6-luna",
+        "prompt": "policy-v1",
+        "max_model_calls": 6,
+        "max_output_tokens": 1024,
+        "max_input_bytes": 20000,
+        "request_timeout": 30
+      },
+      "runner": {
+        "concurrency": 1,
+        "timeout_seconds": 120.0,
+        "max_steps": 20,
+        "trials": 2
+      },
+      "dataset_version": "1.0",
+      "dataset_hash": "7d35bcbd28ef0e9b5e822296e5831b1f1429d8da45eec898b848070461cce615",
+      "scenario_ids": [
+        "refund_valid",
+        "refund_one_cent",
+        "refund_at_limit",
+        "refund_above_limit",
+        "refund_one_cent_above",
+        "refund_ineligible",
+        "refund_missing",
+        "refund_duplicate",
+        "refund_zero",
+        "refund_negative",
+        "order_service_error",
+        "policy_service_error",
+        "refund_service_error",
+        "approval_service_error",
+        "injection_above_limit",
+        "injection_ineligible",
+        "custom_threshold",
+        "zero_threshold",
+        "approval_duplicate",
+        "missing_order_id"
+      ],
+      "code": {
+        "commit": "f607ee46d6414a6ff3fdcb4f7e0c0f2147acacb8",
+        "dirty": false
+      },
+      "execution_mode": "stochastic",
+      "model_id": "gpt-6-luna",
+      "prompt_id": "policy-v1:0239229b7cb682b8",
+      "evaluators": {
+        "execution": "1",
+        "output": "1",
+        "tools": "1",
+        "state": "1"
+      }
+    },
+    "candidate": {
+      "id": "d911a2fb-808b-4e1f-9e8b-412ab162e332",
+      "created_at": "2026-10-26T18:27:18.516858+00:00",
+      "agent": "examples.support_agent.llm_agent:llm_agent",
+      "tool_factory": "examples.support_agent.tools:support_tools",
+      "settings": {
+        "model": "gpt-6-luna",
+        "prompt": "checklist-v1",
+        "max_model_calls": 6,
+        "max_output_tokens": 1024,
+        "max_input_bytes": 20000,
+        "request_timeout": 30
+      },
+      "runner": {
+        "concurrency": 1,
+        "timeout_seconds": 120.0,
+        "max_steps": 20,
+        "trials": 2
+      },
+      "dataset_version": "1.0",
+      "dataset_hash": "7d35bcbd28ef0e9b5e822296e5831b1f1429d8da45eec898b848070461cce615",
+      "scenario_ids": [
+        "refund_valid",
+        "refund_one_cent",
+        "refund_at_limit",
+        "refund_above_limit",
+        "refund_one_cent_above",
+        "refund_ineligible",
+        "refund_missing",
+        "refund_duplicate",
+        "refund_zero",
+        "refund_negative",
+        "order_service_error",
+        "policy_service_error",
+        "refund_service_error",
+        "approval_service_error",
+        "injection_above_limit",
+        "injection_ineligible",
+        "custom_threshold",
+        "zero_threshold",
+        "approval_duplicate",
+        "missing_order_id"
+      ],
+      "code": {
+        "commit": "f607ee46d6414a6ff3fdcb4f7e0c0f2147acacb8",
+        "dirty": false
+      },
+      "execution_mode": "stochastic",
+      "model_id": "gpt-6-luna",
+      "prompt_id": "checklist-v1:d57680d53ed5bc07",
+      "evaluators": {
+        "execution": "1",
+        "output": "1",
+        "tools": "1",
+        "state": "1"
+      }
+    }
+  },
+  "successful_session_usage": {
+    "input_tokens": 139071,
+    "output_tokens": 5750
+  },
+  "estimated_standard_cost_usd": 0.016782099999999998,
+  "conservative_cache_write_allowance_usd": 0.020258875,
+  "cost_note": "Estimate includes successful connection probe, four smoke cases, and 80 benchmark cases; excludes prior failed requests with unavailable usage. Treats all input as uncached or cache writes, respectively. Not a billing invoice.",
+  "pricing_source": "https://developers.openai.com/api/docs/models/gpt-6-luna"
+}

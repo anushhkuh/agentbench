@@ -1,4 +1,4 @@
-# Day 2 demo
+# Three-minute demo
 
 From the repository root after `uv sync --locked --extra dev`:
 
@@ -10,3 +10,9 @@ From the repository root after `uv sync --locked --extra dev`:
 6. Once pushed, manually run **AgentBench regression gate** in GitHub Actions, selecting the flawed adapter to demonstrate a red run. Download `benchmark-reports` for diagnostics. A hosted run is separate from local verification.
 
 No API keys, real refunds, or stochastic model calls are involved. The alternative configuration is `--settings '{"unsafe_refund_first": true}'` with the scripted adapter; the exported flawed adapter avoids platform-specific JSON shell quoting.
+
+## Repeated-trial demonstration
+
+Run `uv run python scripts/benchmark.py --trials 3 --out runs/day3-offline` to reproduce 60 baseline runs and 60 flawed runs. The checked-in `assets/demo.gif` is rendered from those actual saved results, not a screen recording or a live model run. Regenerate it with `python scripts/render_demo.py` after installing Pillow separately (`python -m pip install Pillow`). Pillow is only needed to render the optional presentation asset.
+
+For live prompts and credential setup, see [the LLM guide](llm-agent.md). Keep the distinction clear in a presentation: the recorded demo proves deterministic evaluator and regression-gate behavior; a live model comparison remains pending successful provider access.

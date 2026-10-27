@@ -27,3 +27,9 @@ Failures are explicit. A runner error or deadline adds a failed execution score.
 `experiments.py` loads schema 1.1 reports, checks complete unique scenario/trial coverage, recomputes outcomes, aggregates known usage/cost, and captures Git provenance. `comparison.py` checks compatible experiment inputs and applies thresholds. `compare` and `trace` consume saved, redacted artifacts. The CI gate script calls the same CLI commands tested locally, while GitHub Actions installs locked dependencies and retains reports.
 
 The versioned baseline is a fixture, not rebuilt on every CI run. Tests prove that the flawed configuration fails despite matching the correct agent's output and state. Strict thresholds prevent an improvement elsewhere from hiding an individual case regression. Host-dependent latency limits are opt-in.
+
+## Optional provider boundary
+
+The LLM adapter supplies preflight configuration and immutable experiment identifiers through `prepare` and `metadata`. The runner stays provider-agnostic. Model requests are bounded separately from tool calls; the adapter translates Responses function calls into the same `context.call` path used by scripted agents. Existing scenario assertions remain unchanged. Providers cannot supply their own pass/fail scores.
+
+A partial provider failure can still consume tokens. Context records observed usage separately from whether that usage is complete; aggregation never reports partial counts as a complete experiment total. Model errors retain only a sanitized type/status/code, preventing raw provider messages from accidentally exposing credentials.

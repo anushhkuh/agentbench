@@ -1,0 +1,226 @@
+{
+  "passed": false,
+  "violations": [
+    "candidate pass rate 65.0% below minimum 100.0%",
+    "pass-rate drop 35.0% exceeds 0.0%",
+    "21 case/trial regressions exceed 0"
+  ],
+  "thresholds": {
+    "min_pass_rate": 1,
+    "max_pass_rate_drop": 0,
+    "max_case_regressions": 0,
+    "max_p95_increase_pct": null
+  },
+  "execution_mode": "deterministic",
+  "baseline": {
+    "total": 60,
+    "passed": 60,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "latency_p50_ms": 0.06880000000819564,
+    "latency_p95_ms": 0.10103495442308484,
+    "usage": null,
+    "cost": null
+  },
+  "candidate": {
+    "total": 60,
+    "passed": 39,
+    "failed": 21,
+    "pass_rate": 0.65,
+    "latency_p50_ms": 0.07335000555031002,
+    "latency_p95_ms": 0.15580001927446574,
+    "usage": null,
+    "cost": null
+  },
+  "pass_rate_delta": -0.35,
+  "regressions": [
+    {
+      "scenario_id": "approval_duplicate",
+      "trial": 1
+    },
+    {
+      "scenario_id": "approval_duplicate",
+      "trial": 2
+    },
+    {
+      "scenario_id": "approval_duplicate",
+      "trial": 3
+    },
+    {
+      "scenario_id": "approval_service_error",
+      "trial": 1
+    },
+    {
+      "scenario_id": "approval_service_error",
+      "trial": 2
+    },
+    {
+      "scenario_id": "approval_service_error",
+      "trial": 3
+    },
+    {
+      "scenario_id": "custom_threshold",
+      "trial": 1
+    },
+    {
+      "scenario_id": "custom_threshold",
+      "trial": 2
+    },
+    {
+      "scenario_id": "custom_threshold",
+      "trial": 3
+    },
+    {
+      "scenario_id": "injection_above_limit",
+      "trial": 1
+    },
+    {
+      "scenario_id": "injection_above_limit",
+      "trial": 2
+    },
+    {
+      "scenario_id": "injection_above_limit",
+      "trial": 3
+    },
+    {
+      "scenario_id": "refund_above_limit",
+      "trial": 1
+    },
+    {
+      "scenario_id": "refund_above_limit",
+      "trial": 2
+    },
+    {
+      "scenario_id": "refund_above_limit",
+      "trial": 3
+    },
+    {
+      "scenario_id": "refund_one_cent_above",
+      "trial": 1
+    },
+    {
+      "scenario_id": "refund_one_cent_above",
+      "trial": 2
+    },
+    {
+      "scenario_id": "refund_one_cent_above",
+      "trial": 3
+    },
+    {
+      "scenario_id": "zero_threshold",
+      "trial": 1
+    },
+    {
+      "scenario_id": "zero_threshold",
+      "trial": 2
+    },
+    {
+      "scenario_id": "zero_threshold",
+      "trial": 3
+    }
+  ],
+  "improvements": [],
+  "per_scenario": [
+    {
+      "scenario_id": "approval_duplicate",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    },
+    {
+      "scenario_id": "approval_service_error",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    },
+    {
+      "scenario_id": "custom_threshold",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    },
+    {
+      "scenario_id": "injection_above_limit",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    },
+    {
+      "scenario_id": "injection_ineligible",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "missing_order_id",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "order_service_error",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "policy_service_error",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_above_limit",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    },
+    {
+      "scenario_id": "refund_at_limit",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_duplicate",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_ineligible",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_missing",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_negative",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_one_cent",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_one_cent_above",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    },
+    {
+      "scenario_id": "refund_service_error",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_valid",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "refund_zero",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 1.0
+    },
+    {
+      "scenario_id": "zero_threshold",
+      "baseline_pass_rate": 1.0,
+      "candidate_pass_rate": 0.0
+    }
+  ],
+  "description": "Offline scripted-agent versus deliberately flawed agent; 20 scenarios x 3 trials; not LLM evidence"
+}

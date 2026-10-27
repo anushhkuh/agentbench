@@ -31,7 +31,7 @@ def summarize(runs):
         raise ValueError("report must contain runs")
     passed = sum(run.passed for run in runs)
     # A total is known only if every run provides the same metric.
-    common = set.intersection(*(set(r.usage or {}) for r in runs))
+    common = set.intersection(*(set(r.usage or {}) if r.usage_complete else set() for r in runs))
     usage = {key: sum(r.usage[key] for r in runs) for key in sorted(common)} or None
     cost = sum(r.cost_usd for r in runs) if all(r.cost_usd is not None for r in runs) else None
     return {"total": len(runs), "passed": passed, "failed": len(runs) - passed,

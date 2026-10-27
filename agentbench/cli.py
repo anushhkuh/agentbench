@@ -27,7 +27,7 @@ app = typer.Typer(no_args_is_help=True, help="Evaluate tool-using agents against
 @app.command()
 def version():
     """Show the installed MVP version."""
-    typer.echo("AgentBench 0.1.0")
+    typer.echo("AgentBench 0.3.0")
 
 
 @app.command("eval")
@@ -54,6 +54,17 @@ def evaluate(
         if not isinstance(agent_settings, dict):
             raise ValueError("settings must be a JSON object")
         adapter, factory = import_object(agent), import_object(tools)
+        if hasattr(adapter, "prepare"):
+            agent_settings = adapter.prepare(agent_settings)
+        if getattr(adapter, "execution_mode", None):
+            mode = ExecutionMode(adapter.execution_mode)
+        if hasattr(adapter, "metadata"):
+            metadata = adapter.metadata(agent_settings)
+            if model_id is not None and model_id != metadata["model_id"]:
+                raise ValueError("--model-id conflicts with the adapter's actual model; configure settings.model")
+            if prompt_id is not None and prompt_id != metadata["prompt_id"]:
+                raise ValueError("--prompt-id conflicts with the adapter's actual prompt")
+            model_id, prompt_id = metadata["model_id"], metadata["prompt_id"]
         results = asyncio.run(run_dataset(data, adapter, factory, config=config,
                                          evaluators=default_evaluators(), settings=agent_settings))
         report = make_report(data, results, agent, tools, config, agent_settings,

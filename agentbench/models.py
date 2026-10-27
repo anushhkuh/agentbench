@@ -103,6 +103,7 @@ class EvaluationRun(Contract):
     scores: list[Score] = Field(default_factory=list)
     latency_ms: float
     usage: dict[str, int | float] | None = None
+    usage_complete: bool = True
     cost_usd: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     error: str | None = None
 

@@ -4,3 +4,7 @@ __pycache__/
 *.egg-info/
 runs/
 dist/
+build/
+.env
+.env.*
+!.env.example

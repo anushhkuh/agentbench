@@ -53,7 +53,8 @@ async def run_dataset(dataset, agent, tool_factory, *, config=None, evaluators=(
             run = EvaluationRun(
                 id=run_id, scenario_id=scenario.id, trial=trial, status=status,
                 output=response.output if response else None,
-                usage=response.usage if response else None,
+                usage=response.usage if response and response.usage is not None else (context.usage if context else None),
+                usage_complete=context.usage_complete if context else True,
                 cost_usd=response.cost_usd if response else None,
                 final_state=deepcopy(state), calls=context.calls if context else [],
                 latency_ms=(perf_counter() - started) * 1000, error=error,

@@ -27,7 +27,10 @@ def support_tools(state):
 
     async def get_order(order_id):
         check_failure("get_order")
-        return deepcopy(state.get("orders", {}).get(order_id))
+        order = deepcopy(state.get("orders", {}).get(order_id))
+        if order is not None:
+            order["refunded"] = any(r["order_id"] == order_id for r in state.get("refunds", []))
+        return order
 
     async def get_refund_policy():
         check_failure("get_refund_policy")

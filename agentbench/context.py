@@ -19,6 +19,8 @@ class AgentContext:
         self.settings = deepcopy(settings or {})
         self.calls = []
         self.limit_exceeded = False
+        self.usage = None
+        self.usage_complete = True
         self.run_id = run_id or str(uuid4())
         self._parent = ContextVar(f"parent_{self.run_id}", default=None)
 
